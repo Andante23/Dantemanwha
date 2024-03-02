@@ -3,26 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { __getData } from "../store/modules/manWhaSlice.js";
 import { useDispatch, useSelector } from "react-redux";
+import useSearch from "../hooks/useSearch.js";
+import useGetManWha from "../hooks/useGetManWha.js";
 
-function Home() {
+function HomePage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [inputSearch, setInputSearch] = useState("");
-  useEffect(() => {
-    dispatch(__getData());
-  }, [dispatch]);
 
-  const { isLoading, error, manWha } = useSelector((state) => state);
+  const { inputSearch, onchangeSearch } = useSearch();
+
+  const { isLoading, error, manWha } = useGetManWha();
 
   if (isLoading) {
     return <div>로딩 중....</div>;
   }
 
   if (error) {
-    return <div>{error.message}</div>;
+    return <div>에러</div>;
   }
-
-  const onchangeSearch = (event) => setInputSearch(event.target.value);
 
   const filTerSearchData = manWha?.filter(
     (data) =>
@@ -62,7 +59,7 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomePage;
 
 const StManHwaTable = styled.div`
   display: grid;
