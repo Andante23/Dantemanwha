@@ -1,32 +1,29 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import instance from "../axios/api";
+import { __getData } from "../store/modules/manWhaSlice.js";
 import { useDispatch, useSelector } from "react-redux";
-import { getData } from "../store/modules/manWhaSlice";
 
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // 요청한 URL로부터 데이터를 받아오는 로직
-  const getManHwaData = async () => {
-    const { data } = await instance.get("/anime");
-
-    dispatch(getData(data.data));
-    return data;
-  };
-
   useEffect(() => {
-    getManHwaData();
-  }, []);
+    dispatch(__getData());
+  }, [dispatch]);
 
-  const manWhaData = useSelector((state) => state);
+  const { isLoading, error, manWha } = useSelector((state) => state);
+  if (isLoading) {
+    return <div>로딩 중....</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <StManHwaTable>
-      {manWhaData
+      {manWha
         ?.filter((data) => data.year)
         .map((data) => (
           <StManHwaItem
