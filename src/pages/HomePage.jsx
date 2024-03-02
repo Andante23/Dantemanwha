@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { __getData } from "../store/modules/manWhaSlice.js";
-import { useDispatch, useSelector } from "react-redux";
 import useSearch from "../hooks/useSearch.js";
 import useGetManWha from "../hooks/useGetManWha.js";
 
@@ -10,7 +7,6 @@ function HomePage() {
   const navigate = useNavigate();
 
   const { inputSearch, onchangeSearch } = useSearch();
-
   const { isLoading, error, manWha } = useGetManWha();
 
   if (isLoading) {
@@ -21,7 +17,8 @@ function HomePage() {
     return <div>에러</div>;
   }
 
-  const filTerSearchData = manWha?.filter(
+  // 내가 입력한 만화 제목이  이페이지에 존재하는 만화 제목과 일치한 배열을 저장
+  const filTerSearchData = manWha.filter(
     (data) =>
       data.year && data.title.toLowerCase().includes(inputSearch.toLowerCase())
   );
