@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { __getData } from "../store/modules/manWhaSlice.js";
@@ -7,12 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [inputSearch, setInputSearch] = useState("");
   useEffect(() => {
     dispatch(__getData());
   }, [dispatch]);
 
   const { isLoading, error, manWha } = useSelector((state) => state);
+
   if (isLoading) {
     return <div>로딩 중....</div>;
   }
@@ -21,27 +22,42 @@ function Home() {
     return <div>{error.message}</div>;
   }
 
+  const onchangeSearch = (event) => setInputSearch(event.target.value);
+
   return (
-    <StManHwaTable>
-      {manWha
-        ?.filter((data) => data.year)
-        .map((data) => (
-          <StManHwaItem
-            key={data.mal_id}
-            onClick={() => {
-              navigate(`/detail/${data.mal_id}`);
-            }}
-          >
-            <StManHwaInfo>
-              <StManHwaImage src={data.images.jpg.image_url} alt="대체이미지" />
-              <StManHwaText>{data.title}</StManHwaText>
-              <StManHwaText>
-                {data.episodes} Ep | {data.year}
-              </StManHwaText>
-            </StManHwaInfo>
-          </StManHwaItem>
-        ))}
-    </StManHwaTable>
+    <>
+      <form>
+        <input type="search" value={inputSearch} onChange={onchangeSearch} />
+      </form>
+
+      <StManHwaTable>
+        {manWha
+          ?.filter(
+            (data) =>
+              data.year &&
+              data.title.toLowerCase().includes(inputSearch.toLowerCase())
+          )
+          .map((data) => (
+            <StManHwaItem
+              key={data.mal_id}
+              onClick={() => {
+                navigate(`/detail/${data.mal_id}`);
+              }}
+            >
+              <StManHwaInfo>
+                <StManHwaImage
+                  src={data.images.jpg.image_url}
+                  alt="대체이미지"
+                />
+                <StManHwaText>{data.title}</StManHwaText>
+                <StManHwaText>
+                  {data.episodes} Ep | {data.year}
+                </StManHwaText>
+              </StManHwaInfo>
+            </StManHwaItem>
+          ))}
+      </StManHwaTable>
+    </>
   );
 }
 
