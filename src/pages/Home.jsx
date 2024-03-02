@@ -24,38 +24,39 @@ function Home() {
 
   const onchangeSearch = (event) => setInputSearch(event.target.value);
 
+  const filTerSearchData = manWha?.filter(
+    (data) =>
+      data.year && data.title.toLowerCase().includes(inputSearch.toLowerCase())
+  );
+
   return (
     <>
       <form>
-        <input type="search" value={inputSearch} onChange={onchangeSearch} />
+        <input
+          type="search"
+          value={inputSearch}
+          onChange={onchangeSearch}
+          placeholder="검색어를 입력해주세요"
+        />
       </form>
 
       <StManHwaTable>
-        {manWha
-          ?.filter(
-            (data) =>
-              data.year &&
-              data.title.toLowerCase().includes(inputSearch.toLowerCase())
-          )
-          .map((data) => (
-            <StManHwaItem
-              key={data.mal_id}
-              onClick={() => {
-                navigate(`/detail/${data.mal_id}`);
-              }}
-            >
-              <StManHwaInfo>
-                <StManHwaImage
-                  src={data.images.jpg.image_url}
-                  alt="대체이미지"
-                />
-                <StManHwaText>{data.title}</StManHwaText>
-                <StManHwaText>
-                  {data.episodes} Ep | {data.year}
-                </StManHwaText>
-              </StManHwaInfo>
-            </StManHwaItem>
-          ))}
+        {filTerSearchData.map((data) => (
+          <StManHwaItem
+            key={data.mal_id}
+            onClick={() => {
+              navigate(`/detail/${data.mal_id}`);
+            }}
+          >
+            <StManHwaInfo>
+              <StManHwaImage src={data.images.jpg.image_url} alt="대체이미지" />
+              <StManHwaText>{data.title}</StManHwaText>
+              <StManHwaText>
+                {data.episodes} Ep | {data.year}
+              </StManHwaText>
+            </StManHwaInfo>
+          </StManHwaItem>
+        ))}
       </StManHwaTable>
     </>
   );
